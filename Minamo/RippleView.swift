@@ -127,10 +127,10 @@ extension RippleView {
 // MARK: Animation
 
 public extension RippleView {
-    public func startAnimation() {
+    func startAnimation() {
         ringLayer.removeAllAnimations()
         
-        let scaleAnimation = { Void -> CAAnimation in
+        let scaleAnimation = { () -> CAAnimation in
             let animation = CABasicAnimation(keyPath: "transform.scale")
             animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
             animation.fromValue = NSNumber(value: 1 as Float)
@@ -139,7 +139,7 @@ public extension RippleView {
             return animation
         }()
         
-        let opacityAnimation = { Void -> CAAnimation in
+        let opacityAnimation = { () -> CAAnimation in
             let animation = CABasicAnimation(keyPath: "opacity")
             animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
             animation.fromValue = NSNumber(value: 1 as Float)
@@ -156,7 +156,7 @@ public extension RippleView {
         ringLayer.add(group, forKey: "ring_animation")
     }
     
-    public func restartAnimation() {
+    func restartAnimation() {
         if let animationCount = ringLayer.animationKeys()?.count, animationCount <= 0 {
             return
         }
@@ -167,11 +167,11 @@ public extension RippleView {
 // MARK: Appear and Disappear
 
 public extension RippleView {
-    public func appearAtView(_ view: UIView, offset: CGPoint = CGPoint.zero) {
+    func appearAtView(_ view: UIView, offset: CGPoint = CGPoint.zero) {
         appearInView(view.superview, point: view.center + offset)
     }
     
-    public func appearAtBarButtonItem(_ buttonItem: UIBarButtonItem, offset: CGPoint = CGPoint.zero) {
+    func appearAtBarButtonItem(_ buttonItem: UIBarButtonItem, offset: CGPoint = CGPoint.zero) {
         guard let unmanagedView = buttonItem.perform(#selector(getter: UITouch.view)),
             let view = unmanagedView.takeUnretainedValue() as? UIView else {
                 return
@@ -179,24 +179,24 @@ public extension RippleView {
         appearAtView(view, offset: offset)
     }
     
-    public func appearInView(_ view: UIView?, point: CGPoint) {
+    func appearInView(_ view: UIView?, point: CGPoint) {
         bounds = CGRect(origin: CGPoint.zero, size: size)
         center = point
         view?.addSubview(self)
         startAnimation()
     }
     
-    public func disappear() {
+    func disappear() {
         removeFromSuperview()
     }
     
-    public var appeared: Bool {
+    var appeared: Bool {
         return superview != nil
     }
 }
 
 extension RippleView: UIGestureRecognizerDelegate {
-    func viewTapped(_ gesture: UITapGestureRecognizer) {
+    @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         delegate?.rippleViewTapped(self)
     }
 }
